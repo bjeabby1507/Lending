@@ -3,14 +3,15 @@
 
 var TDErc20 = artifacts.require("ERC20TD.sol");
 var evaluator = artifacts.require("Evaluator.sol");
-
+var ExerciceSolution = artifacts.require("ExerciceSolution.sol");
 
 module.exports = (deployer, network, accounts) => {
     deployer.then(async () => {
         await deployTDToken(deployer, network, accounts); 
         await deployEvaluator(deployer, network, accounts); 
         //await setPermissionsAndRandomValues(deployer, network, accounts); 
-        await basics(deployer, network, accounts)
+        await basics(deployer, network, accounts);
+		await deployExerciceSolution(deployer, network, accounts);
 		await deployRecap(deployer, network, accounts); 
     });
 };
@@ -32,11 +33,11 @@ async function deployEvaluator(deployer, network, accounts) {
 	Evaluator = await evaluator.at("0xF00a099b637841fB2D240ABEeDeb48719836fd6D")
 	console.log(Evaluator.address);
 	console.log("######Evaluator######");
-	var exo = [1,2,3,4,5,6,7,8,9];
+	/*var exo = [1,2,3,4,5,6,7,8,9];
 	for (var i of exo){
 		var progresse = await Evaluator.exerciceProgression(accounts[0],i);
 		console.log("exo "+i +" "+ progresse);
-	}
+	}*/
 }
 
 async function setPermissionsAndRandomValues(deployer, network, accounts) {
@@ -64,7 +65,39 @@ async function basics(deployer, network, accounts){
 	var exo4=await Evaluator.exerciceProgression(accounts[0],4);
 	console.log("exo4 "+exo4);
 }
+async function deployExerciceSolution(deployer, network, accounts) {
+	AAVEAddress= "0xE0fBa4Fc209b4948668006B2bE61711b7f465bAe";
+	DAIAddress ="0xff795577d9ac8bd7d90ee22b6c1703490b6512fd";
+	//ExerciceSolution= await ExerciceSolution.new(AAVEAddress,aDAIAddress, DAIAddress,USDCAddress, variableDebtUSDCAddress);
+	ExerciceSolution = await ExerciceSolution.at("0x35a5557bbA609Eb2dcDEaa897f5b1E22E2f8590b");
+	//await Evaluator.submitExercice(ExerciceSolution.address);
+	//send DAI to yhe contract
 
+	//EXo5 :
+	//await Evaluator.ex5_showContractCanDepositTokens();
+	var exo5=await Evaluator.exerciceProgression(accounts[0],5);
+	console.log("exo5 "+exo5);
+
+	//EXo6 :
+	//await Evaluator.ex6_showContractCanBorrowTokens();
+	var exo6=await Evaluator.exerciceProgression(accounts[0],6);
+	console.log("exo6 "+exo6);
+
+	//EXo7 :
+	//await Evaluator.ex7_showContractCanRepayTokens();
+	var exo7=await Evaluator.exerciceProgression(accounts[0],7);
+	console.log("exo7 "+exo7);
+
+	//EXo8 :
+	//await Evaluator.ex8_showContractCanWithdrawTokens();
+	var exo8=await Evaluator.exerciceProgression(accounts[0],8);
+	console.log("exo8 "+exo8);
+
+	//EXo9 : don't work
+	await Evaluator.ex9_performFlashLoan();
+	var exo9=await Evaluator.exerciceProgression(accounts[0],9);
+	console.log("exo9 "+exo9);
+}
 async function deployRecap(deployer, network, accounts) {
 	var exo = [1,2,3,4,5,6,7,8,9];
     for (var i of exo){
@@ -73,8 +106,9 @@ async function deployRecap(deployer, network, accounts) {
     }
     var mesPoints = await TDToken.balanceOf(accounts[0]);
     console.log(mesPoints.toString());
-	console.log("TDToken " + TDToken.address)
-	console.log("Evaluator " + Evaluator.address)
+	console.log("TDToken " + TDToken.address);
+	console.log("Evaluator " + Evaluator.address);
+	console.log("ExerciceSolution "+ ExerciceSolution.address);
 }
 
 
